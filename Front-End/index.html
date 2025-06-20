@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบจัดการสินค้า</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .controls {
+            padding: 30px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #f1f2f6;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            color: #7f8c8d;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 8px;
+        }
+
+        .product-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        .product-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .product-stock {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 30px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛍️ ระบบจัดการสินค้า</h1>
+            <p>จัดการสินค้าของคุณได้อย่างง่ายดาย</p>
+        </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="loadProducts()">📦 โหลดสินค้าทั้งหมด</button>
+            <button class="btn btn-success" onclick="toggleAddForm()">➕ เพิ่มสินค้าใหม่</button>
+            
+            <!-- ฟอร์มเพิ่มสินค้า -->
+            <div id="addProductForm" style="display: none; margin-top: 20px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">เพิ่มสินค้าใหม่</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newName">ชื่อสินค้า:</label>
+                        <input type="text" id="newName" placeholder="กรุณากรอกชื่อสินค้า">
+                    </div>
+                    <div class="form-group">
+                        <label for="newPrice">ราคา:</label>
+                        <input type="number" id="newPrice" step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="newCategory">หมวดหมู่:</label>
+                        <select id="newCategory">
+                            <option value="อิเล็กทรอนิกส์">อิเล็กทรอนิกส์</option>
+                            <option value="คอมพิวเตอร์">คอมพิวเตอร์</option>
+                            <option value="เครื่องเสียง">เครื่องเสียง</option>
+                            <option value="อุปกรณ์สวมใส่">อุปกรณ์สวมใส่</option>
+                            <option value="กล้องถ่ายภาพ">กล้องถ่ายภาพ</option>
+                            <option value="โดรน">โดรน</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="newStock">จำนวนสต๊อก:</label>
+                        <input type="number" id="newStock" placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newDescription">รายละเอียด:</label>
+                    <textarea id="newDescription" rows="3" placeholder="กรุณากรอกรายละเอียดสินค้า"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="newImageUrl">URL รูปภาพ:</label>
+                    <input type="url" id="newImageUrl" placeholder="https://example.com/image.jpg">
+                </div>
+                <button class="btn btn-success" onclick="addProduct()">💾 บันทึกสินค้า</button>
+                <button class="btn btn-secondary" onclick="toggleAddForm()">❌ ยกเลิก</button>
+            </div>
+
+            <!-- ฟอร์มแก้ไขสินค้า -->
+            <div id="editProductForm" style="display: none; margin-top: 20px; padding: 20px; background: #fff3cd; border-radius: 10px;">
+                <h3 style="margin-bottom: 20px; color: #2c3e50;">แก้ไขสินค้า</h3>
+                <input type="hidden" id="editId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editName">ชื่อสินค้า:</label>
+                        <input type="text" id="editName">
+                    </div>
+                    <div class="form-group">
+                        <label for="editPrice">ราคา:</label>
+                        <input type="number" id="editPrice" step="0.01">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editCategory">หมวดหมู่:</label>
+                        <select id="editCategory">
+                            <option value="อิเล็กทรอนิกส์">อิเล็กทรอนิกส์</option>
+                            <option value="คอมพิวเตอร์">คอมพิวเตอร์</option>
+                            <option value="เครื่องเสียง">เครื่องเสียง</option>
+                            <option value="อุปกรณ์สวมใส่">อุปกรณ์สวมใส่</option>
+                            <option value="กล้องถ่ายภาพ">กล้องถ่ายภาพ</option>
+                            <option value="โดรน">โดรน</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStock">จำนวนสต๊อก:</label>
+                        <input type="number" id="editStock">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editDescription">รายละเอียด:</label>
+                    <textarea id="editDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editImageUrl">URL รูปภาพ:</label>
+                    <input type="url" id="editImageUrl">
+                </div>
+                <button class="btn btn-warning" onclick="updateProduct()">💾 อัปเดต</button>
+                <button class="btn btn-secondary" onclick="cancelEdit()">❌ ยกเลิก</button>
+            </div>
+        </div>
+
+        <div id="alertContainer"></div>
+        
+        <div id="productsContainer">
+            <div class="loading">กำลังโหลดข้อมูล...</div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:3000';
+        let products = [];
+
+        // โหลดสินค้าทั้งหมด (GET)
+        async function loadProducts() {
+            try {
+                showAlert('กำลังโหลดข้อมูล...', 'info');
+                const response = await fetch(`${API_BASE}/products`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                products = await response.json();
+                displayProducts(products);
+                showAlert(`โหลดสินค้าสำเร็จ จำนวน ${products.length} รายการ`, 'success');
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showAlert('เกิดข้อผิดพลาดในการโหลดข้อมูล: ' + error.message, 'error');
+                document.getElementById('productsContainer').innerHTML = 
+                    '<div class="loading">❌ ไม่สามารถโหลดข้อมูลได้<br><small>กรุณาตรวจสอบว่า Server ทำงานอยู่</small></div>';
+            }
+        }
+
+        // แสดงสินค้า
+        function displayProducts(products) {
+            const container = document.getElementById('productsContainer');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<div class="loading">ไม่มีสินค้าในระบบ</div>';
+                return;
+            }
+
+            const productsHTML = products.map(product => `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${product.imageUrl ? 
+                            `<img src="${product.imageUrl}" alt="${product.name}" style="width: 100%; height: 100%; object-fit: cover;">` : 
+                            `📦 ${product.name}`
+                        }
+                    </div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-description">${product.description}</div>
+                        <div class="product-price">฿${product.price.toLocaleString()}</div>
+                        <div class="product-meta">
+                            <span class="product-category">${product.category}</span>
+                            <span class="product-stock">คงเหลือ: ${product.stock}</span>
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn btn-warning btn-sm" onclick="editProduct(${product.id})">✏️ แก้ไข</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">🗑️ ลบ</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = `<div class="products-grid">${productsHTML}</div>`;
+        }
+
+        // เพิ่มสินค้าใหม่ (POST)
+        async function addProduct() {
+            const newProduct = {
+                name: document.getElementById('newName').value,
+                description: document.getElementById('newDescription').value,
+                price: parseFloat(document.getElementById('newPrice').value),
+                category: document.getElementById('newCategory').value,
+                stock: parseInt(document.getElementById('newStock').value),
+                imageUrl: document.getElementById('newImageUrl').value
+            };
+
+            if (!newProduct.name || !newProduct.price || !newProduct.stock) {
+                showAlert('กรุณากรอกข้อมูลให้ครบถ้วน', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/products`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newProduct)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showAlert('เพิ่มสินค้าสำเร็จ!', 'success');
+                
+                // รีเซ็ตฟอร์ม
+                document.getElementById('newName').value = '';
+                document.getElementById('newDescription').value = '';
+                document.getElementById('newPrice').value = '';
+                document.getElementById('newStock').value = '';
+                document.getElementById('newImageUrl').value = '';
+                toggleAddForm();
+                
+                // รีโหลดข้อมูล
+                loadProducts();
+            } catch (error) {
+                console.error('Error adding product:', error);
+                showAlert('เกิดข้อผิดพลาดในการเพิ่มสินค้า: ' + error.message, 'error');
+            }
+        }
+
+        // แก้ไขสินค้า (PUT)
+        function editProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            document.getElementById('editId').value = product.id;
+            document.getElementById('editName').value = product.name;
+            document.getElementById('editDescription').value = product.description;
+            document.getElementById('editPrice').value = product.price;
+            document.getElementById('editCategory').value = product.category;
+            document.getElementById('editStock').value = product.stock;
+            document.getElementById('editImageUrl').value = product.imageUrl || '';
+
+            document.getElementById('editProductForm').style.display = 'block';
+            document.getElementById('addProductForm').style.display = 'none';
+        }
+
+        async function updateProduct() {
+            const id = parseInt(document.getElementById('editId').value);
+            const updatedProduct = {
+                name: document.getElementById('editName').value,
+                description: document.getElementById('editDescription').value,
+                price: parseFloat(document.getElementById('editPrice').value),
+                category: document.getElementById('editCategory').value,
+                stock: parseInt(document.getElementById('editStock').value),
+                imageUrl: document.getElementById('editImageUrl').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(updatedProduct)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showAlert('อัปเดตสินค้าสำเร็จ!', 'success');
+                cancelEdit();
+                loadProducts();
+            } catch (error) {
+                console.error('Error updating product:', error);
+                showAlert('เกิดข้อผิดพลาดในการอัปเดตสินค้า: ' + error.message, 'error');
+            }
+        }
+
+        // ลบสินค้า (DELETE)
+        async function deleteProduct(id) {
+            const product = products.find(p => p.id === id);
+            if (!product) return;
+
+            if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบสินค้า "${product.name}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${id}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const result = await response.json();
+                showAlert(`ลบสินค้า "${product.name}" สำเร็จ!`, 'success');
+                loadProducts();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showAlert('เกิดข้อผิดพลาดในการลบสินค้า: ' + error.message, 'error');
+            }
+        }
+
+        // ฟังก์ชันช่วยเหลือ
+        function toggleAddForm() {
+            const form = document.getElementById('addProductForm');
+            form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            document.getElementById('editProductForm').style.display = 'none';
+        }
+
+        function cancelEdit() {
+            document.getElementById('editProductForm').style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            
+            container.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+
+        // โหลดข้อมูลเมื่อเริ่มต้น
+        window.addEventListener('load', loadProducts);
+    </script>
+</body>
+</html>
