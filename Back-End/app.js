@@ -105,7 +105,20 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
+// ───── MySQL Connection ─────
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',         // แก้ให้ตรงกับ MySQL ของคุณ
+  password: '',         // รหัสผ่าน
+  database: 'productdb'
+});
 
+db.connect((err) => {
+  if (err) throw err;
+  console.log('✅ MySQL connected');
+});
+
+// ───── ROUTES ─
 // ───── ROUTES ─────
 
 // GET: สินค้าทั้งหมด
