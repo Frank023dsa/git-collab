@@ -105,21 +105,14 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
   next();
 });
-// ───── MySQL Connection ─────
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',         // แก้ให้ตรงกับ MySQL ของคุณ
-  password: '',         // รหัสผ่าน
-  database: 'productdb'
+
+
+const sqlite3 = require('sqlite3').verbose();
+const db = new sqlite3.Database('./database.db', (err) => {
+  if (err) return console.error(err.message);
+  console.log('✅ Connected to SQLite database.');
 });
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log('✅ MySQL connected');
-});
-
-// ───── ROUTES ─
-// ───── ROUTES ─────
 
 // GET: สินค้าทั้งหมด
 app.get('/products', (req, res) => {
