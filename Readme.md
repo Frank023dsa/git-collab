@@ -1,6 +1,8 @@
 # Pongsapat Paiput frontend
+การใช้ front end
 ```
-cd client
+cd frontend
+ืnpm init -y
 ืnpm install
 npm run dev
 ```
